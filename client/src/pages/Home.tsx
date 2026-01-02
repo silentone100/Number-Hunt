@@ -1,78 +1,109 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { useLocation } from "wouter";
-import { useMutation } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
-import { api } from "@shared/routes";
-import { useState, useEffect } from "react";
-import { Trophy } from "lucide-react";
+import { useJoinGame } from "@/hooks/use-game";
+import { motion } from "framer-motion";
+import { Loader2, Play, MousePointer2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const [playerId, setPlayerId] = useState("");
+  const joinGame = useJoinGame();
+  const [isCreating, setIsCreating] = useState(false);
 
-  useEffect(() => {
-    let id = localStorage.getItem("playerId");
-    if (!id) {
-      id = Math.random().toString(36).substring(7);
-      localStorage.setItem("playerId", id);
-    }
-    setPlayerId(id);
-  }, []);
-
-  const joinMutation = useMutation({
-    mutationFn: async () => {
-      const res = await apiRequest("POST", api.games.join.path, { playerId });
-      return res.json();
-    },
-    onSuccess: (data) => {
-      localStorage.setItem(`role_${data.gameId}`, data.role);
+  const handlePlay = async () => {
+    try {
+      setIsCreating(true);
+      const data = await joinGame.mutateAsync();
       setLocation(`/game/${data.gameId}`);
-    },
-  });
+    } catch (e) {
+      setIsCreating(false);
+      // Toast handled in hook
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-lg border-2 border-primary/10">
-        <CardHeader className="text-center space-y-2">
-          <div className="mx-auto bg-primary/10 w-16 h-16 rounded-full flex items-center justify-center">
-            <Trophy className="w-8 h-8 text-primary" />
+    <div className="min-h-screen flex items-center justify-center p-4 overflow-hidden relative">
+      {/* Decorative background elements */}
+      <motion.div 
+        animate={{ 
+          y: [0, -20, 0],
+          rotate: [0, 5, 0]
+        }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute top-[10%] left-[10%] w-32 h-32 rounded-full bg-red-100 opacity-50 blur-xl"
+      />
+      <motion.div 
+        animate={{ 
+          y: [0, 30, 0],
+          rotate: [0, -5, 0]
+        }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute bottom-[20%] right-[10%] w-48 h-48 rounded-full bg-blue-100 opacity-50 blur-xl"
+      />
+
+      <div className="max-w-md w-full relative z-10 text-center">
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="mb-8 relative inline-block">
+            <h1 className="text-7xl md:text-8xl font-display text-transparent bg-clip-text bg-gradient-to-br from-slate-800 to-slate-600 drop-shadow-sm">
+              99
+            </h1>
+            <motion.div 
+              animate={{ x: [0, 10, 0], y: [0, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="absolute -right-8 -top-4 text-red-500 transform rotate-12"
+            >
+              <MousePointer2 className="w-12 h-12 fill-current" />
+            </motion.div>
           </div>
-          <CardTitle className="text-3xl font-bold tracking-tight text-slate-900">
-            Choose the Number
-          </CardTitle>
-          <p className="text-slate-500">
-            Race to find and click the lowest numbers first!
+
+          <h2 className="text-3xl font-bold text-slate-800 mb-2">
+            Choose The Number
+          </h2>
+          <p className="text-slate-500 mb-10 text-lg">
+            Race against an opponent to find numbers 1-99 in order. Speed and precision win!
           </p>
-        </CardHeader>
-        <CardContent className="space-y-6 pt-4">
-          <div className="bg-slate-100 p-4 rounded-lg space-y-2">
-            <h3 className="font-semibold text-slate-700">How to Play:</h3>
-            <ul className="text-sm text-slate-600 list-disc list-inside space-y-1">
-              <li>Join a game with another player</li>
-              <li>Find the lowest available number (starts at 1)</li>
-              <li>Click it before your opponent does!</li>
-              <li>The player with most numbers wins</li>
-            </ul>
-          </div>
-          
-          <Button 
-            className="w-full h-12 text-lg font-bold transition-all hover-elevate active-elevate-2"
+
+          <Button
             size="lg"
-            onClick={() => joinMutation.mutate()}
-            disabled={joinMutation.isPending}
-            data-testid="button-find-game"
+            onClick={handlePlay}
+            disabled={isCreating}
+            className="
+              text-xl px-12 py-8 rounded-2xl font-display tracking-wide
+              bg-gradient-to-r from-indigo-600 to-violet-600 
+              hover:from-indigo-500 hover:to-violet-500
+              shadow-xl shadow-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-500/40
+              hover:-translate-y-1 active:translate-y-0 transition-all duration-200
+            "
           >
-            {joinMutation.isPending ? "Finding Opponent..." : "Find Game"}
+            {isCreating ? (
+              <>
+                <Loader2 className="w-6 h-6 mr-3 animate-spin" />
+                Finding Match...
+              </>
+            ) : (
+              <>
+                <Play className="w-6 h-6 mr-3 fill-current" />
+                Find Game
+              </>
+            )}
           </Button>
-          
-          <div className="text-center">
-            <p className="text-xs text-slate-400">
-              Your Player ID: <span className="font-mono">{playerId}</span>
-            </p>
+
+          <div className="mt-12 grid grid-cols-2 gap-4">
+            <div className="bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-sm">
+              <div className="w-3 h-3 rounded-full bg-red-500 mx-auto mb-2" />
+              <p className="text-sm font-semibold text-slate-600">Click Fast</p>
+            </div>
+            <div className="bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-sm">
+              <div className="w-3 h-3 rounded-full bg-blue-500 mx-auto mb-2" />
+              <p className="text-sm font-semibold text-slate-600">Be Accurate</p>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </motion.div>
+      </div>
     </div>
   );
 }
