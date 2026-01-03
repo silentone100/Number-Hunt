@@ -60,3 +60,15 @@ export function buildUrl(path: string, params?: Record<string, string | number>)
   }
   return url;
 }
+
+// Type helpers — Infer types from schemas
+export type JoinGameRequest = z.infer<typeof api.games.join.input>;
+export type ClickNumberRequest = z.infer<typeof api.games.click.input>;
+
+export type NoteInput = any; // Dummy to avoid build errors if referenced elsewhere
+export type NoteResponse = any;
+export type NoteUpdateInput = any;
+export type NotesListResponse = any;
+export type ValidationError = z.infer<typeof errorSchemas.validation>;
+export type NotFoundError = z.infer<typeof errorSchemas.notFound>;
+export type InternalError = any;
