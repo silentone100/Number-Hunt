@@ -36,9 +36,9 @@ export function useGame(id: number | null) {
 export function useJoinGame() {
   const { toast } = useToast();
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (forceNew?: boolean) => {
       const playerId = getPlayerId();
-      const payload: JoinGameRequest = { playerId };
+      const payload: JoinGameRequest = { playerId, forceNew };
       
       const res = await fetch(api.games.join.path, {
         method: api.games.join.method,

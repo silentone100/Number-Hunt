@@ -4,33 +4,34 @@ import { games, type Game, type InsertGame } from "@shared/schema";
 import { eq, and, isNull, sql } from "drizzle-orm";
 
 export interface IStorage {
-  createOrJoinGame(playerId: string): Promise<{ game: Game, role: 'p1' | 'p2', message: string }>;
+  createOrJoinGame(playerId: string, forceNew?: boolean): Promise<{ game: Game, role: 'p1' | 'p2', message: string }>;
   getGame(id: number): Promise<Game | undefined>;
   clickNumber(gameId: number, playerId: string, number: number): Promise<Game>;
 }
 
 export class DatabaseStorage implements IStorage {
-  async createOrJoinGame(playerId: string): Promise<{ game: Game, role: 'p1' | 'p2', message: string }> {
-    // Try to join an existing waiting game
-    // Atomic update to prevent race conditions
-    const [joinedGame] = await db
-      .update(games)
-      .set({ 
-        player2Id: playerId, 
-        status: 'playing' 
-      })
-      .where(and(eq(games.status, 'waiting'), isNull(games.player2Id)))
-      .returning();
+  async createOrJoinGame(playerId: string, forceNew = false): Promise<{ game: Game, role: 'p1' | 'p2', message: string }> {
+    if (!forceNew) {
+      // Try to join an existing waiting game
+      const [joinedGame] = await db
+        .update(games)
+        .set({ 
+          player2Id: playerId, 
+          status: 'playing' 
+        })
+        .where(and(eq(games.status, 'waiting'), isNull(games.player2Id)))
+        .returning();
 
-    if (joinedGame) {
-      return { game: joinedGame, role: 'p2', message: 'Joined existing game' };
+      if (joinedGame) {
+        return { game: joinedGame, role: 'p2', message: 'Joined existing game' };
+      }
     }
 
-    // No game found, create a new one
+    // No game found or forcing new, create a new one
     const positions = Array.from({ length: 99 }, (_, i) => ({
       value: i + 1,
       x: Math.floor(Math.random() * 90) + 5, // 5-95%
-      y: Math.floor(Math.random() * 85) + 10  // 10-95% (leave room for header)
+      y: Math.floor(Math.random() * 80) + 10  // 10-90% (leave room for header)
     }));
 
     const [newGame] = await db
@@ -42,7 +43,8 @@ export class DatabaseStorage implements IStorage {
         takenBy: {},
         currentTarget: 1,
         p1Score: 0,
-        p2Score: 0
+        p2Score: 0,
+        seed: Math.random().toString(36).substring(7)
       })
       .returning();
 

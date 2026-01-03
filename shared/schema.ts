@@ -18,6 +18,8 @@ export const games = pgTable("games", {
   positions: json("positions").$type<Array<{value: number, x: number, y: number}>>().notNull(),
   // Map of number -> "p1" | "p2"
   takenBy: json("taken_by").$type<Record<string, "p1" | "p2">>().notNull().default({}),
+  // For forcing new games
+  seed: text("seed"),
 });
 
 export const insertGameSchema = createInsertSchema(games);
@@ -28,6 +30,7 @@ export type InsertGame = z.infer<typeof insertGameSchema>;
 // API Payloads
 export const joinGameSchema = z.object({
   playerId: z.string().min(1),
+  forceNew: z.boolean().optional(),
 });
 
 export const clickNumberSchema = z.object({

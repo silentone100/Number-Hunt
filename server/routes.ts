@@ -12,8 +12,8 @@ export async function registerRoutes(
   
   app.post(api.games.join.path, async (req, res) => {
     try {
-      const { playerId } = api.games.join.input.parse(req.body);
-      const result = await storage.createOrJoinGame(playerId);
+      const { playerId, forceNew } = api.games.join.input.parse(req.body);
+      const result = await storage.createOrJoinGame(playerId, forceNew);
       res.json(result);
     } catch (e) {
       console.error(e);

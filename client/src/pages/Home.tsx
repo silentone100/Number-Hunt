@@ -10,10 +10,10 @@ export default function Home() {
   const joinGame = useJoinGame();
   const [isCreating, setIsCreating] = useState(false);
 
-  const handlePlay = async () => {
+  const handlePlay = async (forceNew = false) => {
     try {
       setIsCreating(true);
-      const data = await joinGame.mutateAsync();
+      const data = await joinGame.mutateAsync(forceNew);
       setLocation(`/game/${data.gameId}`);
     } catch (e) {
       setIsCreating(false);
@@ -70,7 +70,7 @@ export default function Home() {
           <div className="flex flex-col gap-4">
             <Button
               size="lg"
-              onClick={handlePlay}
+              onClick={() => handlePlay(false)}
               disabled={isCreating}
               className="
                 text-xl px-12 py-8 rounded-2xl font-display tracking-wide
@@ -96,7 +96,7 @@ export default function Home() {
             <Button
               size="lg"
               variant="outline"
-              onClick={handlePlay}
+              onClick={() => handlePlay(true)}
               disabled={isCreating}
               className="text-lg px-12 py-6 rounded-2xl border-2 hover:bg-slate-50 transition-all"
             >
