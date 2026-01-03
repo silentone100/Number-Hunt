@@ -67,30 +67,42 @@ export default function Home() {
             Race against an opponent to find numbers 1-99 in order. Speed and precision win!
           </p>
 
-          <Button
-            size="lg"
-            onClick={handlePlay}
-            disabled={isCreating}
-            className="
-              text-xl px-12 py-8 rounded-2xl font-display tracking-wide
-              bg-gradient-to-r from-indigo-600 to-violet-600 
-              hover:from-indigo-500 hover:to-violet-500
-              shadow-xl shadow-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-500/40
-              hover:-translate-y-1 active:translate-y-0 transition-all duration-200
-            "
-          >
-            {isCreating ? (
-              <>
-                <Loader2 className="w-6 h-6 mr-3 animate-spin" />
-                Finding Match...
-              </>
-            ) : (
-              <>
-                <Play className="w-6 h-6 mr-3 fill-current" />
-                Find Game
-              </>
-            )}
-          </Button>
+          <div className="flex flex-col gap-4">
+            <Button
+              size="lg"
+              onClick={handlePlay}
+              disabled={isCreating}
+              className="
+                text-xl px-12 py-8 rounded-2xl font-display tracking-wide
+                bg-gradient-to-r from-indigo-600 to-violet-600 
+                hover:from-indigo-500 hover:to-violet-500
+                shadow-xl shadow-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-500/40
+                hover:-translate-y-1 active:translate-y-0 transition-all duration-200
+              "
+            >
+              {isCreating ? (
+                <>
+                  <Loader2 className="w-6 h-6 mr-3 animate-spin" />
+                  Finding Match...
+                </>
+              ) : (
+                <>
+                  <Play className="w-6 h-6 mr-3 fill-current" />
+                  Find Game
+                </>
+              )}
+            </Button>
+
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handlePlay}
+              disabled={isCreating}
+              className="text-lg px-12 py-6 rounded-2xl border-2 hover:bg-slate-50 transition-all"
+            >
+              Create New Canvas
+            </Button>
+          </div>
 
           <div className="mt-12 grid grid-cols-2 gap-4">
             <div className="bg-white/60 backdrop-blur-sm p-4 rounded-xl border border-white/50 shadow-sm">
