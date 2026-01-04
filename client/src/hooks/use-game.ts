@@ -35,6 +35,8 @@ export function useGame(id: number | null) {
 // POST /api/games/join
 export function useJoinGame() {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: async (forceNew?: boolean) => {
       const playerId = getPlayerId();
@@ -47,8 +49,23 @@ export function useJoinGame() {
         credentials: "include",
       });
 
-      if (!res.ok) throw new Error("Failed to join game");
-      return api.games.join.responses[200].parse(await res.json());
+      if (!res.ok) {
+        const errorText = await res.text();
+        let errorMessage = "Failed to join game";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // fallback to generic error
+        }
+        throw new Error(errorMessage);
+      }
+      
+      const data = await res.json();
+      return data as { game: any; role: "p1" | "p2"; message: string };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: [api.games.get.path] });
     },
     onError: (error) => {
       toast({

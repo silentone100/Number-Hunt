@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { useJoinGame } from "@/hooks/use-game";
+import { useJoinGame, getPlayerId } from "@/hooks/use-game";
 import { motion } from "framer-motion";
 import { Loader2, Play, MousePointer2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,21 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const joinGame = useJoinGame();
   const [isCreating, setIsCreating] = useState(false);
+  const [playerId, setPlayerId] = useState("");
+
+  useEffect(() => {
+    setPlayerId(getPlayerId());
+  }, []);
 
   const handlePlay = async (forceNew = false) => {
     try {
       setIsCreating(true);
+      // Directly using joinGame.mutateAsync(forceNew)
       const data = await joinGame.mutateAsync(forceNew);
-      setLocation(`/game/${data.gameId}`);
+      if (data && data.game) {
+        localStorage.setItem(`role_${data.game.id}`, data.role);
+        setLocation(`/game/${data.game.id}`);
+      }
     } catch (e) {
       setIsCreating(false);
       // Toast handled in hook

@@ -22,7 +22,7 @@ export const api = {
       input: joinGameSchema,
       responses: {
         200: z.object({
-          gameId: z.number(),
+          game: z.custom<typeof games.$inferSelect>(),
           role: z.enum(['p1', 'p2']),
           message: z.string()
         }),
