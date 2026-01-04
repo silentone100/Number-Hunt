@@ -19,10 +19,11 @@ export default function Game() {
   const [hasCelebrated, setHasCelebrated] = useState(false);
 
   // Determine user role and opponent
-  const isP1 = game?.player1Id === playerId;
-  const isP2 = game?.player2Id === playerId;
+  const role = gameId ? localStorage.getItem(`click_race_role_${gameId}`) : null;
+  const isP1 = role === "p1" || (game?.player1Id === playerId);
+  const isP2 = role === "p2" || (game?.player2Id === playerId);
   const userRole = isP1 ? "p1" : isP2 ? "p2" : "spectator";
-  
+
   // Confetti effect on win
   useEffect(() => {
     if (game?.status === "finished" && !hasCelebrated) {

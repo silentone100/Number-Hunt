@@ -16,17 +16,19 @@ export default function Home() {
   }, []);
 
   const handlePlay = async (forceNew = false) => {
+    if (isCreating) return;
     try {
       setIsCreating(true);
-      // Directly using joinGame.mutateAsync(forceNew)
       const data = await joinGame.mutateAsync(forceNew);
       if (data && data.game) {
-        localStorage.setItem(`role_${data.game.id}`, data.role);
+        // Use a more robust way to store roles that doesn't conflict
+        localStorage.setItem(`click_race_role_${data.game.id}`, data.role);
         setLocation(`/game/${data.game.id}`);
       }
     } catch (e) {
-      setIsCreating(false);
       // Toast handled in hook
+    } finally {
+      setIsCreating(false);
     }
   };
 
