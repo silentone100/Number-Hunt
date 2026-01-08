@@ -30,7 +30,7 @@ export class DatabaseStorage implements IStorage {
     // No game found or forcing new, create a new one
     const positions = Array.from({ length: 99 }, (_, i) => ({
       value: i + 1,
-      x: Math.floor(Math.random() * 90) + 5, // 5-95%
+      x: Math.floor(Math.random() * 85) + 7, // 7-92%
       y: Math.floor(Math.random() * 80) + 10  // 10-90% (leave room for header)
     }));
 

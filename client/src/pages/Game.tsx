@@ -150,7 +150,7 @@ export default function Game() {
         )}
         
         {/* Game Canvas */}
-        <div className="relative w-full h-full bg-white rounded-3xl shadow-sm border overflow-hidden">
+        <div className="relative w-full h-full bg-white rounded-3xl shadow-sm border overflow-visible">
           {/* Grid pattern background */}
           <div className="absolute inset-0 opacity-[0.03]" 
                style={{ 
@@ -167,7 +167,6 @@ export default function Game() {
             else if (taken === "p2") status = "taken-p2";
             else if (pos.value === game.currentTarget) status = "target";
             else if (pos.value > game.currentTarget) status = "disabled"; // Can't click future numbers
-            // if pos.value < currentTarget but not taken, it's effectively disabled/skipped (shouldn't happen in valid state)
             
             return (
               <GameNumber
