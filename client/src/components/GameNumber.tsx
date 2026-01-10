@@ -29,6 +29,7 @@ export function GameNumber({ value, x, y, status, onClick }: GameNumberProps) {
       style={{ 
         left: `${x}%`, 
         top: `${y}%`,
+        position: 'absolute'
       }}
       className={cn(
         "absolute w-10 h-10 md:w-12 md:h-12 -ml-5 -mt-5 md:-ml-6 md:-mt-6 rounded-full flex items-center justify-center font-bold text-lg md:text-xl shadow-md border-2 transition-colors cursor-pointer select-none",
