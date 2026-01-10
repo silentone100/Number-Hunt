@@ -30,8 +30,8 @@ export class DatabaseStorage implements IStorage {
     // No game found or forcing new, create a new one
     const positions = Array.from({ length: 99 }, (_, i) => ({
       value: i + 1,
-      x: Math.floor(Math.random() * 85) + 7, // 7-92%
-      y: Math.floor(Math.random() * 85) + 7  // 7-92%
+      x: Math.floor(Math.random() * 86) + 7, // 7-93%
+      y: Math.floor(Math.random() * 86) + 7  // 7-93%
     }));
 
     const [newGame] = await db
