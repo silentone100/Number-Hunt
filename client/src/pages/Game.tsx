@@ -165,7 +165,6 @@ export default function Game() {
             
             if (taken === "p1") status = "taken-p1";
             else if (taken === "p2") status = "taken-p2";
-            else if (pos.value === game.currentTarget) status = "target";
             else if (pos.value > game.currentTarget) status = "disabled"; // Can't click future numbers
             
             return (

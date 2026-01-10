@@ -19,9 +19,9 @@ export function GameNumber({ value, x, y, status, onClick }: GameNumberProps) {
       layout
       initial={{ scale: 0, opacity: 0 }}
       animate={{ 
-        scale: isTarget ? 1.2 : 1, 
+        scale: 1, 
         opacity: 1,
-        zIndex: isTarget ? 50 : 1 
+        zIndex: 1 
       }}
       whileHover={!isDisabled ? { scale: 1.1, zIndex: 40 } : {}}
       whileTap={!isDisabled ? { scale: 0.9 } : {}}
@@ -35,9 +35,6 @@ export function GameNumber({ value, x, y, status, onClick }: GameNumberProps) {
         
         // Default available state
         status === "available" && "bg-white text-slate-700 border-slate-200 hover:border-slate-400",
-        
-        // Next target state (Highlighted)
-        status === "target" && "bg-yellow-400 text-yellow-950 border-yellow-600 shadow-xl shadow-yellow-400/30 ring-4 ring-yellow-400/20",
         
         // Disabled (future numbers)
         status === "disabled" && "bg-slate-100 text-slate-300 border-slate-200 cursor-not-allowed",

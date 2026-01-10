@@ -31,7 +31,7 @@ export class DatabaseStorage implements IStorage {
     const positions = Array.from({ length: 99 }, (_, i) => ({
       value: i + 1,
       x: Math.floor(Math.random() * 85) + 7, // 7-92%
-      y: Math.floor(Math.random() * 80) + 10  // 10-90% (leave room for header)
+      y: Math.floor(Math.random() * 85) + 7  // 7-92%
     }));
 
     const [newGame] = await db
