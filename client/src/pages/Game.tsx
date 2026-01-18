@@ -153,7 +153,7 @@ export default function Game() {
           </div>
         )}
         
-        <div className="relative w-full h-full bg-white rounded-3xl shadow-sm border overflow-visible">
+        <div className="relative aspect-square w-full bg-white rounded-3xl shadow-sm border overflow-visible">
           {/* Grid pattern background */}
           <div className="absolute inset-0 opacity-[0.03]" 
                style={{ 
