@@ -133,23 +133,26 @@ export default function Game() {
         </div>
       </header>
 
-      {/* Game Board */}
+      {/* Game Canvas */}
       <main className="flex-1 relative w-full max-w-5xl mx-auto p-4 md:p-8 h-[calc(100vh-140px)] min-h-[500px]">
-        {/* Waiting State Overlay */}
+        {/* Waiting State Information Bar */}
         {game.status === "waiting" && (
-          <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-sm rounded-3xl border-2 border-dashed border-slate-300 m-4">
-            <div className="text-center p-8 bg-white shadow-2xl rounded-2xl border max-w-md mx-4 animate-in zoom-in duration-300">
-              <Loader2 className="w-12 h-12 text-primary animate-spin mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2">Waiting for Opponent</h2>
-              <p className="text-slate-500 mb-6">Share the URL or wait for someone to join.</p>
-              <div className="bg-slate-100 p-3 rounded-lg font-mono text-sm break-all select-all cursor-pointer hover:bg-slate-200 transition-colors">
+          <div className="mb-4 p-4 bg-indigo-50 border border-indigo-100 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4 animate-in fade-in slide-in-from-top duration-500">
+            <div className="flex items-center gap-3">
+              <Loader2 className="w-5 h-5 text-indigo-600 animate-spin" />
+              <div className="text-left">
+                <h3 className="text-sm font-bold text-indigo-900 leading-none mb-1">Waiting for Opponent</h3>
+                <p className="text-xs text-indigo-600">Share the URL below to invite a player</p>
+              </div>
+            </div>
+            <div className="flex-1 max-w-md w-full">
+              <div className="bg-white/80 p-2 rounded-lg border border-indigo-200 font-mono text-xs break-all select-all cursor-pointer hover:bg-white transition-colors text-indigo-700">
                 {window.location.href}
               </div>
             </div>
           </div>
         )}
         
-        {/* Game Canvas */}
         <div className="relative w-full h-full bg-white rounded-3xl shadow-sm border overflow-visible">
           {/* Grid pattern background */}
           <div className="absolute inset-0 opacity-[0.03]" 
