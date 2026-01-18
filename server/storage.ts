@@ -28,17 +28,27 @@ export class DatabaseStorage implements IStorage {
     }
 
     // No game found or forcing new, create a new one
-    const positions = Array.from({ length: 99 }, (_, i) => ({
-      value: i + 1,
-      x: Math.floor(Math.random() * 86) + 7, // 7-93%
-      y: Math.floor(Math.random() * 86) + 7  // 7-93%
-    }));
+    const positions: { value: number; x: number; y: number }[] = [];
+    const minDistance = 10; // Increased distance to ~10% to ensure no overlaps (radius is ~4-5%)
+    
+    for (let i = 1; i <= 99; i++) {
+      let x = 0, y = 0, tooClose = false;
+      let attempts = 0;
+      do {
+        x = Math.floor(Math.random() * 80) + 10; // 10-90% to keep away from edges
+        y = Math.floor(Math.random() * 80) + 10;
+        tooClose = positions.some(p => Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < minDistance);
+        attempts++;
+      } while (tooClose && attempts < 200); // More attempts for tight packing
+      
+      positions.push({ value: i, x, y });
+    }
 
     const [newGame] = await db
       .insert(games)
       .values({
         player1Id: playerId,
-        status: 'waiting',
+        status: 'waiting' as GameStatus,
         positions,
         takenBy: {},
         currentTarget: 1,
