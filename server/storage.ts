@@ -42,8 +42,9 @@ export class DatabaseStorage implements IStorage {
       const col = gridIndex % 10;
       
       // Random offset within the 10% cell, but keep centered-ish
-      const x = (col * 10) + 5;
-      const y = (row * 10) + 5;
+      // Using 9x9 grid layout within the 100% space to keep items away from edges
+      const x = (col * 9) + 5.5;
+      const y = (row * 9) + 5.5;
       
       positions.push({ value: i, x, y });
     }
