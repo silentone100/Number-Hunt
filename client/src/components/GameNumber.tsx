@@ -6,10 +6,11 @@ interface GameNumberProps {
   x: number;
   y: number;
   status: "available" | "taken-p1" | "taken-p2" | "target" | "disabled";
+  isHidden?: boolean;
   onClick: (value: number) => void;
 }
 
-export function GameNumber({ value, x, y, status, onClick }: GameNumberProps) {
+export function GameNumber({ value, x, y, status, isHidden, onClick }: GameNumberProps) {
   const isTaken = status === "taken-p1" || status === "taken-p2";
   const isTarget = status === "target";
   const isDisabled = status === "disabled" || isTaken;
@@ -23,8 +24,8 @@ export function GameNumber({ value, x, y, status, onClick }: GameNumberProps) {
         opacity: 1,
         zIndex: 1 
       }}
-      whileHover={!isDisabled ? { scale: 1.1, zIndex: 40 } : {}}
-      whileTap={!isDisabled ? { scale: 0.9 } : {}}
+      whileHover={!isDisabled && !isHidden ? { scale: 1.1, zIndex: 40 } : {}}
+      whileTap={!isDisabled && !isHidden ? { scale: 0.9 } : {}}
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
       style={{ 
         position: 'absolute',
@@ -36,21 +37,24 @@ export function GameNumber({ value, x, y, status, onClick }: GameNumberProps) {
         "absolute w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-lg md:text-xl shadow-md border-2 transition-colors cursor-pointer select-none",
         
         // Default available state
-        status === "available" && "bg-white text-slate-700 border-slate-200 hover:border-slate-400",
+        status === "available" && !isHidden && "bg-white text-slate-700 border-slate-200 hover:border-slate-400",
         
+        // Hidden state (?)
+        isHidden && "bg-slate-100 text-slate-400 border-slate-200 cursor-default",
+
         // Disabled (future numbers)
-        status === "disabled" && "bg-slate-100 text-slate-300 border-slate-200 cursor-not-allowed",
+        status === "disabled" && !isHidden && "bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed",
         
         // Taken by Player 1 (Red)
         status === "taken-p1" && "bg-red-100 text-red-700 border-red-500 shadow-none ring-2 ring-red-500/30",
         
         // Taken by Player 2 (Blue)
-        status === "taken-p2" && "bg-blue-100 text-blue-700 border-blue-500 shadow-none ring-2 ring-blue-500/30"
+        status === "taken-p2" && "bg-blue-100 text-blue-700 border-blue-500 shadow-none ring-2 blue-500/30"
       )}
-      onClick={() => !isDisabled && onClick(value)}
-      disabled={isDisabled}
+      onClick={() => !isDisabled && !isHidden && onClick(value)}
+      disabled={isDisabled || isHidden}
     >
-      {(isTaken || status === "available") ? value : "?"}
+      {isHidden ? "?" : value}
       
       {/* Taken Indicator Ring Animation */}
       <AnimatePresence>

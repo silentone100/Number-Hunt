@@ -170,13 +170,17 @@ export default function Game() {
             else if (taken === "p2") status = "taken-p2";
             else if (pos.value > game.currentTarget) status = "disabled"; // Can't click future numbers
             
+            // If game is waiting, all numbers are hidden (?)
+            const isHidden = game.status === "waiting";
+            
             return (
               <GameNumber
-                key={`${pos.value}-${game.currentTarget}`}
+                key={`${pos.value}-${game.currentTarget}-${game.status}`}
                 value={pos.value}
                 x={pos.x}
                 y={pos.y}
                 status={status}
+                isHidden={isHidden}
                 onClick={handleNumberClick}
               />
             );

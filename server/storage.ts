@@ -27,19 +27,23 @@ export class DatabaseStorage implements IStorage {
       }
     }
 
-    // No game found or forcing new, create a new one
+    // Grid-based placement (10x10)
+    const grid: number[] = Array.from({ length: 100 }, (_, i) => i);
+    // Shuffle grid positions
+    for (let i = grid.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [grid[i], grid[j]] = [grid[j], grid[i]];
+    }
+
     const positions: { value: number; x: number; y: number }[] = [];
-    const minDistance = 10; // Increased distance to ~10% to ensure no overlaps (radius is ~4-5%)
-    
     for (let i = 1; i <= 99; i++) {
-      let x = 0, y = 0, tooClose = false;
-      let attempts = 0;
-      do {
-        x = Math.floor(Math.random() * 80) + 10; // 10-90% to keep away from edges
-        y = Math.floor(Math.random() * 80) + 10;
-        tooClose = positions.some(p => Math.sqrt(Math.pow(p.x - x, 2) + Math.pow(p.y - y, 2)) < minDistance);
-        attempts++;
-      } while (tooClose && attempts < 200); // More attempts for tight packing
+      const gridIndex = grid[i - 1];
+      const row = Math.floor(gridIndex / 10);
+      const col = gridIndex % 10;
+      
+      // Random offset within the 10% cell, but keep centered-ish
+      const x = (col * 10) + 5;
+      const y = (row * 10) + 5;
       
       positions.push({ value: i, x, y });
     }
