@@ -168,14 +168,14 @@ export default function Game() {
             
             if (taken === "p1") status = "taken-p1";
             else if (taken === "p2") status = "taken-p2";
-            else if (pos.value > game.currentTarget) status = "disabled"; // Can't click future numbers
+            else status = "available"; // All untaken numbers look the same
             
             // If game is waiting, all numbers are hidden (?)
             const isHidden = game.status === "waiting";
             
             return (
               <GameNumber
-                key={`${pos.value}-${game.currentTarget}-${game.status}`}
+                key={`${pos.value}-${game.status}-${taken}`}
                 value={pos.value}
                 x={pos.x}
                 y={pos.y}

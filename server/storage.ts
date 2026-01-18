@@ -118,8 +118,10 @@ export class DatabaseStorage implements IStorage {
       .returning();
       
     if (!updatedGame) {
-       // Someone else clicked it first?
-       throw new Error("Too slow! Number already taken.");
+       // Someone else clicked it first? Return current state
+       const current = await this.getGame(gameId);
+       if (!current) throw new Error("Game not found");
+       return current;
     }
 
     return updatedGame;

@@ -37,22 +37,19 @@ export function GameNumber({ value, x, y, status, isHidden, onClick }: GameNumbe
         "absolute w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-lg md:text-xl shadow-md border-2 transition-colors cursor-pointer select-none",
         
         // Default available state
-        status === "available" && !isHidden && "bg-white text-slate-700 border-slate-200 hover:border-slate-400",
+        status === "available" && !isHidden && "bg-white text-slate-700 border-slate-200",
         
         // Hidden state (?)
         isHidden && "bg-slate-100 text-slate-400 border-slate-200 cursor-default",
 
-        // Disabled (future numbers)
-        status === "disabled" && !isHidden && "bg-slate-50 text-slate-300 border-slate-100 cursor-not-allowed",
-        
         // Taken by Player 1 (Red)
-        status === "taken-p1" && "bg-red-100 text-red-700 border-red-500 shadow-none ring-2 ring-red-500/30",
+        status === "taken-p1" && "bg-red-500 text-white border-red-600 shadow-none",
         
         // Taken by Player 2 (Blue)
-        status === "taken-p2" && "bg-blue-100 text-blue-700 border-blue-500 shadow-none ring-2 blue-500/30"
+        status === "taken-p2" && "bg-blue-500 text-white border-blue-600 shadow-none"
       )}
-      onClick={() => !isDisabled && !isHidden && onClick(value)}
-      disabled={isDisabled || isHidden}
+      onClick={() => !isTaken && !isHidden && onClick(value)}
+      disabled={isTaken || isHidden}
     >
       {isHidden ? "?" : value}
       
