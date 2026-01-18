@@ -50,7 +50,7 @@ export function GameNumber({ value, x, y, status, onClick }: GameNumberProps) {
       onClick={() => !isDisabled && onClick(value)}
       disabled={isDisabled}
     >
-      {value}
+      {(isTaken || status === "available") ? value : "?"}
       
       {/* Taken Indicator Ring Animation */}
       <AnimatePresence>

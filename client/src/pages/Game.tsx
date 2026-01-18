@@ -169,7 +169,7 @@ export default function Game() {
             
             return (
               <GameNumber
-                key={pos.value}
+                key={`${pos.value}-${game.currentTarget}`}
                 value={pos.value}
                 x={pos.x}
                 y={pos.y}
