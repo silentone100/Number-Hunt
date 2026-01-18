@@ -21,12 +21,11 @@ export default function Home() {
       setIsCreating(true);
       const data = await joinGame.mutateAsync(forceNew);
       if (data && data.game) {
-        // Use a more robust way to store roles that doesn't conflict
         localStorage.setItem(`click_race_role_${data.game.id}`, data.role);
         setLocation(`/game/${data.game.id}`);
       }
     } catch (e) {
-      // Toast handled in hook
+      // Error handled by hook toast
     } finally {
       setIsCreating(false);
     }

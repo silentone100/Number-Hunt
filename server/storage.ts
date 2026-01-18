@@ -25,6 +25,10 @@ export class DatabaseStorage implements IStorage {
       if (joinedGame) {
         return { game: joinedGame, role: 'p2', message: 'Joined existing game' };
       }
+      
+      // If we are looking for a game but none found, we should throw an error or return null
+      // The user wants "Find Game" to only find, not create.
+      throw new Error("No waiting games found. Try creating a new one!");
     }
 
     // Grid-based placement (10x10)
@@ -53,7 +57,7 @@ export class DatabaseStorage implements IStorage {
       .insert(games)
       .values({
         player1Id: playerId,
-        status: 'waiting' as GameStatus,
+        status: "waiting",
         positions,
         takenBy: {},
         currentTarget: 1,
