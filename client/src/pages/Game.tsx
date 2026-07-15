@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
-import { useGame, useClickNumber, getPlayerId } from "@/hooks/use-game";
+import { useGame, useClickNumber, useDeleteGame, getPlayerId } from "@/hooks/use-game";
 import { GameNumber } from "@/components/GameNumber";
 import { PlayerStats } from "@/components/PlayerStats";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertCircle, RefreshCw, Trophy } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw, Trophy, X } from "lucide-react";
 import confetti from "canvas-confetti";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -16,6 +16,7 @@ export default function Game() {
   
   const { data: game, isLoading, error } = useGame(gameId);
   const clickNumber = useClickNumber();
+  const deleteGame = useDeleteGame();
   const [hasCelebrated, setHasCelebrated] = useState(false);
 
   // Determine user role and opponent
@@ -150,6 +151,30 @@ export default function Game() {
                 {window.location.href}
               </div>
             </div>
+            {isP1 && (
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  if (gameId && playerId) {
+                    deleteGame.mutate(
+                      { gameId, playerId },
+                      {
+                        onSuccess: () => {
+                          localStorage.removeItem(`click_race_role_${gameId}`);
+                          setLocation("/");
+                        },
+                      }
+                    );
+                  }
+                }}
+                disabled={deleteGame.isPending}
+                className="shrink-0"
+              >
+                <X className="w-4 h-4 mr-1" />
+                Cancel
+              </Button>
+            )}
           </div>
         )}
         

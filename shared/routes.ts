@@ -46,6 +46,15 @@ export const api = {
         404: errorSchemas.notFound,
       },
     },
+    delete: {
+      method: 'DELETE' as const,
+      path: '/api/games/:id',
+      responses: {
+        200: z.object({ success: z.boolean() }),
+        403: errorSchemas.conflict,
+        404: errorSchemas.notFound,
+      },
+    },
   },
 };
 

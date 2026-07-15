@@ -39,9 +39,9 @@ export async function registerRoutes(
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) return res.status(404).json({ message: "Invalid ID" });
-      
+
       const { playerId, number } = api.games.click.input.parse(req.body);
-      
+
       const game = await storage.clickNumber(id, playerId, number);
       res.json(game);
     } catch (e: any) {
@@ -51,6 +51,28 @@ export async function registerRoutes(
       }
       if (e.message.includes("not found")) {
          return res.status(404).json({ message: e.message });
+      }
+      console.error(e);
+      res.status(500).json({ message: "Internal error" });
+    }
+  });
+
+  app.delete(api.games.delete.path, async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) return res.status(404).json({ message: "Invalid ID" });
+
+      const { playerId } = req.body;
+      if (!playerId) return res.status(400).json({ message: "playerId required" });
+
+      await storage.deleteGame(id, playerId);
+      res.json({ success: true });
+    } catch (e: any) {
+      if (e.message.includes("Only the game creator")) {
+        return res.status(403).json({ message: e.message });
+      }
+      if (e.message.includes("not found")) {
+        return res.status(404).json({ message: e.message });
       }
       console.error(e);
       res.status(500).json({ message: "Internal error" });

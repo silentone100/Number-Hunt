@@ -7,6 +7,7 @@ export interface IStorage {
   createOrJoinGame(playerId: string, forceNew?: boolean): Promise<{ game: Game, role: 'p1' | 'p2', message: string }>;
   getGame(id: number): Promise<Game | undefined>;
   clickNumber(gameId: number, playerId: string, number: number): Promise<Game>;
+  deleteGame(id: number, playerId: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -79,10 +80,10 @@ export class DatabaseStorage implements IStorage {
     // We need to fetch the game first to validate logic
     // In a real app we might use a transaction or more complex SQL to do this atomically
     // For this MVP, we'll fetch and then update if valid
-    
+
     const game = await this.getGame(gameId);
     if (!game) throw new Error("Game not found");
-    
+
     if (game.status !== 'playing') {
       throw new Error("Game is not in playing state");
     }
@@ -100,7 +101,7 @@ export class DatabaseStorage implements IStorage {
 
     // Check if already taken (should be covered by currentTarget check, but safe to check)
     // Actually currentTarget check is enough because we increment it.
-    
+
     // Prepare updates
     const updates: Partial<InsertGame> = {
       currentTarget: game.currentTarget + 1,
@@ -121,7 +122,7 @@ export class DatabaseStorage implements IStorage {
       .set(updates)
       .where(and(eq(games.id, gameId), eq(games.currentTarget, number))) // Ensure we only update if target hasn't changed
       .returning();
-      
+
     if (!updatedGame) {
        // Someone else clicked it first? Return current state
        const current = await this.getGame(gameId);
@@ -130,6 +131,23 @@ export class DatabaseStorage implements IStorage {
     }
 
     return updatedGame;
+  }
+
+  async deleteGame(id: number, playerId: string): Promise<boolean> {
+    const game = await this.getGame(id);
+    if (!game) throw new Error("Game not found");
+
+    // Only the game creator (player1) can delete the game while it's waiting
+    if (game.player1Id !== playerId) {
+      throw new Error("Only the game creator can cancel");
+    }
+
+    if (game.status !== 'waiting') {
+      throw new Error("Cannot cancel a game that has already started");
+    }
+
+    await db.delete(games).where(eq(games.id, id));
+    return true;
   }
 }
 

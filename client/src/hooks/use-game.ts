@@ -77,6 +77,49 @@ export function useJoinGame() {
   });
 }
 
+// DELETE /api/games/:id
+export function useDeleteGame() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ gameId, playerId }: { gameId: number; playerId: string }) => {
+      const url = buildUrl(api.games.delete.path, { id: gameId });
+
+      const res = await fetch(url, {
+        method: api.games.delete.method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playerId }),
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        let errorMessage = "Failed to cancel game";
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorMessage;
+        } catch (e) {
+          // fallback
+        }
+        throw new Error(errorMessage);
+      }
+
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [api.games.get.path] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}
+
 // POST /api/games/:id/click
 export function useClickNumber() {
   const queryClient = useQueryClient();
