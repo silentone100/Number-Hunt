@@ -46,14 +46,14 @@ export class DatabaseStorage implements IStorage {
       const row = Math.floor(gridIndex / 10);
       const col = gridIndex % 10;
 
-      // Each cell is 10% of the canvas. Place numbers randomly within each cell
-      // with a margin so they don't touch edges
-      const margin = 1; // 1% margin
-      const cellSize = 10;
-      const innerSize = cellSize - margin * 2;
+      // Center of the cell
+      const centerX = col * 10 + 5;
+      const centerY = row * 10 + 5;
 
-      const x = (col * cellSize) + margin + Math.random() * innerSize;
-      const y = (row * cellSize) + margin + Math.random() * innerSize;
+      // Small random offset around the center (±0.5%) so numbers don't overlap neighbors
+      const offsetRange = 0.5;
+      const x = centerX + (Math.random() * 2 - 1) * offsetRange;
+      const y = centerY + (Math.random() * 2 - 1) * offsetRange;
 
       positions.push({ value: i, x, y });
     }
