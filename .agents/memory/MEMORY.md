@@ -1,0 +1,1 @@
+- [Npm lockfile regeneration](npm-lockfile-regeneration.md) — Optional platform packages can block lockfile-only installs behind the package firewall; verify and preserve audited lock updates.

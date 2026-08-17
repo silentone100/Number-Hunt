@@ -71,6 +71,9 @@ export async function registerRoutes(
       if (e.message.includes("Only the game creator")) {
         return res.status(403).json({ message: e.message });
       }
+      if (e.message.includes("Player not in this game")) {
+        return res.status(403).json({ message: e.message });
+      }
       if (e.message.includes("not found")) {
         return res.status(404).json({ message: e.message });
       }

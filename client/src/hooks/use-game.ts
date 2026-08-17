@@ -95,7 +95,7 @@ export function useDeleteGame() {
 
       if (!res.ok) {
         const errorText = await res.text();
-        let errorMessage = "Failed to cancel game";
+        let errorMessage = "Failed to leave game";
         try {
           const errorData = JSON.parse(errorText);
           errorMessage = errorData.message || errorMessage;

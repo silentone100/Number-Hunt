@@ -1,6 +1,6 @@
 
 import { db } from "./db";
-import { games, type Game, type InsertGame } from "@shared/schema";
+import { games, type Game, type GameStatus, type InsertGame } from "@shared/schema";
 import { eq, and, isNull, sql } from "drizzle-orm";
 
 export interface IStorage {
@@ -107,7 +107,7 @@ export class DatabaseStorage implements IStorage {
     // Actually currentTarget check is enough because we increment it.
 
     // Prepare updates
-    const updates: Partial<InsertGame> = {
+    const updates: Partial<InsertGame> & { status?: GameStatus } = {
       currentTarget: game.currentTarget + 1,
       takenBy: { ...game.takenBy, [number]: role }
     };
@@ -141,13 +141,29 @@ export class DatabaseStorage implements IStorage {
     const game = await this.getGame(id);
     if (!game) throw new Error("Game not found");
 
-    // Only the game creator (player1) can delete the game while it's waiting
+    if (game.status === 'playing') {
+      if (game.player1Id !== playerId && game.player2Id !== playerId) {
+        throw new Error("Player not in this game");
+      }
+
+      // Ending the game instead of deleting it lets both players' polling
+      // receive the same finished state.
+      const [finishedGame] = await db
+        .update(games)
+        .set({ status: 'finished' })
+        .where(and(eq(games.id, id), eq(games.status, 'playing')))
+        .returning();
+
+      return Boolean(finishedGame);
+    }
+
+    // Only the game creator can delete a waiting game.
     if (game.player1Id !== playerId) {
       throw new Error("Only the game creator can cancel");
     }
 
     if (game.status !== 'waiting') {
-      throw new Error("Cannot cancel a game that has already started");
+      throw new Error("Cannot cancel a game that has already finished");
     }
 
     await db.delete(games).where(eq(games.id, id));

@@ -177,6 +177,29 @@ export default function Game() {
             )}
           </div>
         )}
+
+        {game.status === "playing" && (
+          <div className="mb-4 flex justify-end">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                if (gameId && playerId) {
+                  deleteGame.mutate({ gameId, playerId });
+                }
+              }}
+              disabled={deleteGame.isPending}
+              className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+            >
+              {deleteGame.isPending ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <X className="w-4 h-4 mr-2" />
+              )}
+              Quit game
+            </Button>
+          </div>
+        )}
         
         <div className="relative aspect-square w-full bg-white rounded-3xl shadow-sm border overflow-visible">
           {/* Grid pattern background */}
